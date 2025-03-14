@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="24dp"
+    tools:context=".ui.AddTransactionActivity">
+
+    <!-- Tlačítko zpět -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnBack"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
+        android:backgroundTint="?attr/colorPrimary"
+        android:elevation="4dp"
+        android:icon="@drawable/ic_arrow_back"
+        android:text="Zpět"
+        android:textSize="14sp"
+        app:iconPadding="8dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!-- Typ transakce -->
+    <androidx.appcompat.widget.AppCompatSpinner
+        android:id="@+id/spinnerType"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:entries="@array/transaction_types"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:padding="12dp"
+        app:layout_constraintTop_toBottomOf="@id/btnBack"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <!-- Částka -->
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/tilTransactionAmount"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Částka"
+        app:layout_constraintTop_toBottomOf="@id/spinnerType"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="8dp">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/etTransactionAmount"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="numberDecimal"/>
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!-- Datum -->
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/tilTransactionDate"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Datum (YYYY-MM-DD)"
+        app:layout_constraintTop_toBottomOf="@id/tilTransactionAmount"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="8dp">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/etTransactionDate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:focusable="false"/>
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!-- Kategorie -->
+    <androidx.appcompat.widget.AppCompatSpinner
+        android:id="@+id/spinnerCategory"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:padding="12dp"
+        app:layout_constraintTop_toBottomOf="@id/tilTransactionDate"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="8dp"/>
+
+    <!-- Uložit -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnSave"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Uložit"
+        android:textSize="16sp"
+        android:backgroundTint="?attr/colorPrimary"
+        android:elevation="4dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintTop_toBottomOf="@id/spinnerCategory"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+</androidx.constraintlayout.widget.ConstraintLayout>

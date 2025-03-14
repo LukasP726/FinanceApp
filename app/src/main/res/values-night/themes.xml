@@ -1,0 +1,7 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <style name="Theme.FinanceApp" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="android:windowBackground">@android:color/background_dark</item>
+        <item name="android:textColorPrimary">@android:color/primary_text_dark</item>
+        <item name="android:textColorSecondary">@android:color/secondary_text_dark</item>
+    </style>
+</resources>
