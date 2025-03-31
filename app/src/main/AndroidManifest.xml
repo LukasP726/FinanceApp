@@ -27,9 +27,10 @@
             </intent-filter>
         </activity>
 
-
         <activity android:name=".ui.AddTransactionActivity" />
         <activity android:name=".ui.StatisticsActivity" />
+        <activity android:name=".ui.FilterActivity" />
+
     </application>
 
 </manifest>

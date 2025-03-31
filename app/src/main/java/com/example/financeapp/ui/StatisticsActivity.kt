@@ -78,8 +78,20 @@ class StatisticsActivity : AppCompatActivity() {
         CoroutineScope(Dispatchers.IO).launch {
             val transactions = repository.getAllTransactions()
 
-            val totalIncome = transactions.filter { it.type == "income" }.sumOf { it.amount }
-            val totalExpense = transactions.filter { it.type == "expense" }.sumOf { it.amount }
+            val minAmount = intent.getDoubleExtra("minAmount", 0.0)
+            val maxAmount = intent.getDoubleExtra("maxAmount", Double.MAX_VALUE)
+            val category = intent.getStringExtra("category") ?: "Vše"
+            val dateFrom = intent.getLongExtra("dateFrom", 0L)
+            val dateTo = intent.getLongExtra("dateTo", Long.MAX_VALUE)
+
+            val filteredTransactions = transactions.filter { transaction ->
+                transaction.amount in minAmount..maxAmount &&
+                        transaction.category == category &&
+                        transaction.date in dateFrom..dateTo
+            }
+
+            val totalIncome = filteredTransactions.filter { it.type == "income" }.sumOf { it.amount }
+            val totalExpense = filteredTransactions.filter { it.type == "expense" }.sumOf { it.amount }
             val balance = totalIncome - totalExpense
 
             withContext(Dispatchers.Main) {

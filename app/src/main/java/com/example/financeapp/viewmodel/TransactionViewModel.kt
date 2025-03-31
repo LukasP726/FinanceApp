@@ -58,6 +58,12 @@ class TransactionViewModel(private val repository: TransactionRepository) : View
     }
 
 
+    fun filterTransactions(category: String?, minAmount: Double?, maxAmount: Double?): LiveData<List<Transaction>> {
+        return repository.getFilteredTransactions(category, minAmount, maxAmount)
+    }
+
+
+
 
 
 

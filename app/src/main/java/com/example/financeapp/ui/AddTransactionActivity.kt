@@ -49,8 +49,9 @@ class AddTransactionActivity : AppCompatActivity() {
             saveTransaction()
         }
 
-        val btnBack = findViewById<Button>(R.id.btnBack)
-        btnBack.setOnClickListener {
+        //val btnBack = findViewById<Button>(R.id.btnBack)
+
+        binding.btnBack.setOnClickListener {
             onBackPressedDispatcher.onBackPressed()
         }
 

@@ -33,6 +33,11 @@ class TransactionRepository(private val transactionDao: TransactionDao) {
 
     fun getTotalExpense(): LiveData<Double> = transactionDao.getTotalExpense()
 
+    fun getFilteredTransactions(category: String?, minAmount: Double?, maxAmount: Double?): LiveData<List<Transaction>> {
+        return transactionDao.getFilteredTransactions(category, minAmount, maxAmount)
+    }
+
+
 
 
 }
