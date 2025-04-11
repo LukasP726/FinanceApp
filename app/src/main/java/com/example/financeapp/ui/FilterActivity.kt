@@ -5,10 +5,6 @@ import android.app.DatePickerDialog
 import android.content.Intent
 import android.os.Bundle
 import android.widget.ArrayAdapter
-import android.widget.Button
-import android.widget.DatePicker
-import android.widget.EditText
-import android.widget.Spinner
 import androidx.appcompat.app.AppCompatActivity
 import com.example.financeapp.R
 import com.example.financeapp.databinding.ActivityFilterBinding
@@ -16,12 +12,18 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
 
+/**
+ * Aktivita pro filtrování výdajů podle částky, kategorie a časového období.
+ * Vrací zadané filtrační parametry jako výsledek do předchozí aktivity.
+ */
 class FilterActivity : AppCompatActivity() {
     private lateinit var binding: ActivityFilterBinding
-    private var selectedDateFrom: Long = System.currentTimeMillis() // Výchozí datum je dnes
-    private var selectedDateTo: Long = System.currentTimeMillis() // Výchozí datum je dnes
+    private var selectedDateFrom: Long = System.currentTimeMillis()
+    private var selectedDateTo: Long = System.currentTimeMillis()
 
-
+    /**
+     * Inicializuje layout, spinner s kategoriemi a obsluhu tlačítek.
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityFilterBinding.inflate(layoutInflater)
@@ -31,11 +33,11 @@ class FilterActivity : AppCompatActivity() {
             onBackPressedDispatcher.onBackPressed()
         }
 
-        // Naplnění spinneru kategoriemi
         val categories = arrayOf("Vše", "Jídlo", "Doprava", "Zábava", "Ostatní")
         val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, categories)
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         binding.spinnerCategory.adapter = adapter
+
         setupDatePicker()
 
         binding.btnApplyFilter.setOnClickListener {
@@ -43,12 +45,13 @@ class FilterActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Získá hodnoty z formuláře a odešle je zpět do předchozí aktivity jako výsledek.
+     */
     private fun applyFilter() {
         val minAmount = binding.etMinAmount.text.toString().toDoubleOrNull() ?: 0.0
         val maxAmount = binding.etMaxAmount.text.toString().toDoubleOrNull() ?: Double.MAX_VALUE
         val category = binding.spinnerCategory.selectedItem.toString()
-
-
 
         val resultIntent = Intent()
         resultIntent.putExtra("minAmount", minAmount)
@@ -61,42 +64,49 @@ class FilterActivity : AppCompatActivity() {
         finish()
     }
 
-
+    /**
+     * Nastaví výběr počátečního a koncového data pomocí DatePickerDialog.
+     */
     private fun setupDatePicker() {
-        val calendar = Calendar.getInstance()
-        val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+        val calendarFrom = Calendar.getInstance()
+        calendarFrom.add(Calendar.DAY_OF_MONTH, -1)
+        selectedDateFrom = calendarFrom.timeInMillis
 
-        binding.datePickerFrom.setText(dateFormat.format(calendar.time))
-        binding.datePickerTo.setText(dateFormat.format(calendar.time))
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+        binding.datePickerFrom.setText(dateFormat.format(calendarFrom.time))
 
         binding.datePickerFrom.setOnClickListener {
             val datePicker = DatePickerDialog(
                 this,
                 { _, year, month, dayOfMonth ->
-                    calendar.set(year, month, dayOfMonth)
-                    selectedDateFrom = calendar.timeInMillis
-                    binding.datePickerFrom.setText(dateFormat.format(calendar.time))
+                    val selectedCalendar = Calendar.getInstance()
+                    selectedCalendar.set(year, month, dayOfMonth)
+                    selectedDateFrom = selectedCalendar.timeInMillis
+                    binding.datePickerFrom.setText(dateFormat.format(selectedCalendar.time))
                 },
-                calendar.get(Calendar.YEAR),
-                calendar.get(Calendar.MONTH),
-                calendar.get(Calendar.DAY_OF_MONTH)
+                calendarFrom.get(Calendar.YEAR),
+                calendarFrom.get(Calendar.MONTH),
+                calendarFrom.get(Calendar.DAY_OF_MONTH)
             )
             datePicker.show()
         }
 
-
+        val calendarTo = Calendar.getInstance()
+        selectedDateTo = calendarTo.timeInMillis
+        binding.datePickerTo.setText(dateFormat.format(calendarTo.time))
 
         binding.datePickerTo.setOnClickListener {
             val datePicker = DatePickerDialog(
                 this,
                 { _, year, month, dayOfMonth ->
-                    calendar.set(year, month, dayOfMonth)
-                    selectedDateTo = calendar.timeInMillis
-                    binding.datePickerTo.setText(dateFormat.format(calendar.time))
+                    val selectedCalendar = Calendar.getInstance()
+                    selectedCalendar.set(year, month, dayOfMonth)
+                    selectedDateTo = selectedCalendar.timeInMillis
+                    binding.datePickerTo.setText(dateFormat.format(selectedCalendar.time))
                 },
-                calendar.get(Calendar.YEAR),
-                calendar.get(Calendar.MONTH),
-                calendar.get(Calendar.DAY_OF_MONTH)
+                calendarTo.get(Calendar.YEAR),
+                calendarTo.get(Calendar.MONTH),
+                calendarTo.get(Calendar.DAY_OF_MONTH)
             )
             datePicker.show()
         }

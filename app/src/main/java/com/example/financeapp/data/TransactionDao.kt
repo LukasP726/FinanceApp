@@ -22,7 +22,7 @@ interface TransactionDao {
     suspend fun getTransactionsByType(transactionType: String): List<Transaction>  // Příjmy/Výdaje
 
     @Update
-    suspend fun update(transaction: Transaction)
+    suspend fun update(transaction: Transaction)// Aktualizace transakce
 
 
     @Query("SELECT SUM(amount) FROM transactions WHERE type = 'income'")
@@ -31,17 +31,6 @@ interface TransactionDao {
     @Query("SELECT SUM(amount) FROM transactions WHERE type = 'expense'")
     fun getTotalExpense(): LiveData<Double>
 
-    @Query(
-        """SELECT * FROM transactions WHERE 
-        (:category IS NULL OR category = :category) AND
-        (:minAmount IS NULL OR amount >= :minAmount) AND
-        (:maxAmount IS NULL OR amount <= :maxAmount)"""
-    )
-    fun getFilteredTransactions(
-        category: String?,
-        minAmount: Double?,
-        maxAmount: Double?
-    ): LiveData<List<Transaction>>
 
 
 }

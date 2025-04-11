@@ -29,6 +29,10 @@ import java.io.File
 import java.io.FileOutputStream
 import java.io.OutputStream
 
+/**
+ * Activity sloužící pro zobrazení statistik transakcí uživatele.
+ * Obsahuje grafy a možnosti exportu dat do CSV.
+ */
 class StatisticsActivity : AppCompatActivity() {
     private lateinit var repository: TransactionRepository
     private lateinit var pieChart: PieChart
@@ -39,6 +43,7 @@ class StatisticsActivity : AppCompatActivity() {
 
         pieChart = findViewById(R.id.pieChart)
 
+        // Inicializace základních hodnot pro graf (Příjmy, Výdaje)
         val entries = listOf(
             PieEntry(500f, "Příjmy"),
             PieEntry(300f, "Výdaje")
@@ -48,11 +53,12 @@ class StatisticsActivity : AppCompatActivity() {
         val data = PieData(dataSet)
 
         pieChart.data = data
-        pieChart.invalidate()
+        pieChart.invalidate() // Aktualizace grafu
+
         val dao = TransactionDatabase.getDatabase(this).transactionDao()
         repository = TransactionRepository(dao)
 
-        loadStatistics()
+        loadStatistics() // Načtení statistik při spuštění aktivity
 
         val button = findViewById<Button>(R.id.btnExportCSV)
         button.setOnClickListener {
@@ -60,24 +66,24 @@ class StatisticsActivity : AppCompatActivity() {
             animator.duration = 200
             animator.start()
 
-            exportToCSV(this)
+            exportToCSV(this) // Export dat do CSV souboru při kliknutí na tlačítko
         }
 
         val btnBack = findViewById<Button>(R.id.btnBack)
         btnBack.setOnClickListener {
-            onBackPressedDispatcher.onBackPressed()
+            onBackPressedDispatcher.onBackPressed() // Návrat zpět na předchozí obrazovku
         }
-
-
-
-
     }
 
-
+    /**
+     * Načítá transakce a filtruje je podle zadaných parametrů.
+     * Výsledky jsou zobrazeny v textových polích a v grafu.
+     */
     private fun loadStatistics() {
         CoroutineScope(Dispatchers.IO).launch {
             val transactions = repository.getAllTransactions()
 
+            // Filtrace transakcí podle zadaných parametrů (minimální částka, maximální částka, kategorie, datum)
             val minAmount = intent.getDoubleExtra("minAmount", 0.0)
             val maxAmount = intent.getDoubleExtra("maxAmount", Double.MAX_VALUE)
             val category = intent.getStringExtra("category") ?: "Vše"
@@ -86,7 +92,7 @@ class StatisticsActivity : AppCompatActivity() {
 
             val filteredTransactions = transactions.filter { transaction ->
                 transaction.amount in minAmount..maxAmount &&
-                        transaction.category == category &&
+                        (category == "Vše" || transaction.category == category) &&
                         transaction.date in dateFrom..dateTo
             }
 
@@ -99,11 +105,15 @@ class StatisticsActivity : AppCompatActivity() {
                 findViewById<TextView>(R.id.tvTotalExpense).text = "Výdaje: ${totalExpense} Kč"
                 findViewById<TextView>(R.id.tvBalance).text = "Zůstatek: ${balance} Kč"
 
-                setupPieChart(totalIncome.toFloat(), totalExpense.toFloat())
+                setupPieChart(totalIncome.toFloat(), totalExpense.toFloat()) // Nastavení grafu
             }
         }
     }
 
+    /**
+     * Nastavuje pie chart s daty o příjmech a výdajích.
+     * Používá zelenou pro příjmy a červenou pro výdaje.
+     */
     private fun setupPieChart(income: Float, expense: Float) {
         val pieChart = findViewById<PieChart>(R.id.pieChart)
 
@@ -120,8 +130,10 @@ class StatisticsActivity : AppCompatActivity() {
         pieChart.invalidate() // Aktualizace grafu
     }
 
-
-
+    /**
+     * Exportuje transakce do CSV souboru, který se uloží do složky Stahování nebo Dokumenty.
+     * Používá MediaStore pro Android 10 a novější verze.
+     */
     private fun exportToCSV(context: Context) {
         CoroutineScope(Dispatchers.IO).launch {
             val transactions = repository.getAllTransactions()
@@ -139,7 +151,7 @@ class StatisticsActivity : AppCompatActivity() {
 
             try {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                    // 📌 Android 10+ (API 29+): Použití MediaStore
+                    // Android 10+ (API 29+): Použití MediaStore pro ukládání souborů
                     val contentValues = ContentValues().apply {
                         put(MediaStore.MediaColumns.DISPLAY_NAME, fileName)
                         put(MediaStore.MediaColumns.MIME_TYPE, "text/csv")
@@ -150,7 +162,7 @@ class StatisticsActivity : AppCompatActivity() {
                     uri = resolver.insert(MediaStore.Files.getContentUri("external"), contentValues)
                     outputStream = uri?.let { resolver.openOutputStream(it) }
                 } else {
-                    // 📌 Android 9 a starší (API 28-): Uložení do interní složky aplikace
+                    // Android 9 a starší (API 28-): Uložení do interní složky aplikace
                     val file = File(context.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), fileName)
                     outputStream = FileOutputStream(file)
                 }
@@ -171,7 +183,4 @@ class StatisticsActivity : AppCompatActivity() {
             }
         }
     }
-
-
-
 }

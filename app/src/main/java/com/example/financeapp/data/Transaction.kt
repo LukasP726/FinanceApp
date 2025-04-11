@@ -12,5 +12,4 @@ data class Transaction(
     val type: String,  // "income" nebo "expense"
     val date: Long,  // Timestamp (uložené datum)
     val category: String,  // Kategorie (např. Jídlo, Doprava...)
-    //val note: String? = null  // Volitelná poznámka
 )

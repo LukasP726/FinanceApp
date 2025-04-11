@@ -28,12 +28,20 @@ import java.util.Calendar
 import java.util.Locale
 import java.io.OutputStream
 
+/**
+ * Aktivita sloužící k přidání nové transakce nebo úpravě existující.
+ * Umožňuje zadat částku, typ (příjem/výdaj), kategorii a datum.
+ */
 class AddTransactionActivity : AppCompatActivity() {
     private lateinit var binding: ActivityAddTransactionBinding
     private lateinit var repository: TransactionRepository
-    private var selectedDate: Long = System.currentTimeMillis() // Výchozí datum je dnes
+    private var selectedDate: Long = System.currentTimeMillis()
     private var transactionId: Int = -1
 
+    /**
+     * Inicializace aktivity a UI prvků.
+     * Při editaci načte existující data.
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityAddTransactionBinding.inflate(layoutInflater)
@@ -49,19 +57,19 @@ class AddTransactionActivity : AppCompatActivity() {
             saveTransaction()
         }
 
-        //val btnBack = findViewById<Button>(R.id.btnBack)
-
         binding.btnBack.setOnClickListener {
             onBackPressedDispatcher.onBackPressed()
         }
 
-        // Získání hodnot z Intentu, pokud nějaké existují (tj. editace)
         transactionId = intent.getIntExtra("transaction_id", -1)
-        if (transactionId != -1) { // Pokud je předán platný ID transakce, načíst ji
+        if (transactionId != -1) {
             loadTransactionData()
         }
     }
 
+    /**
+     * Načte data transakce z intentu pro účely úpravy.
+     */
     private fun loadTransactionData() {
         val amount = intent.getDoubleExtra("amount", 0.0)
         val type = intent.getStringExtra("type") ?: "expense"
@@ -72,20 +80,17 @@ class AddTransactionActivity : AppCompatActivity() {
         binding.etTransactionDate.setText(SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(date))
         selectedDate = date
 
-        // Nastavení spinneru pro typ transakce
         val typeIndex = if (type == "income") 0 else 1
         binding.spinnerType.setSelection(typeIndex)
 
-        // Nastavení spinneru pro kategorii
         val categoryAdapter = binding.spinnerCategory.adapter as ArrayAdapter<String>
         val categoryIndex = categoryAdapter.getPosition(category)
         binding.spinnerCategory.setSelection(categoryIndex)
     }
 
-
-
-
-
+    /**
+     * Nastaví hodnoty pro spinner kategorií.
+     */
     private fun setupCategorySpinner() {
         val categories = listOf("Jídlo", "Doprava", "Zábava", "Oblečení", "Jiné")
         val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, categories)
@@ -93,6 +98,9 @@ class AddTransactionActivity : AppCompatActivity() {
         binding.spinnerCategory.adapter = adapter
     }
 
+    /**
+     * Nastaví zobrazení a výběr data pomocí DatePickerDialogu.
+     */
     private fun setupDatePicker() {
         val calendar = Calendar.getInstance()
         val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
@@ -115,6 +123,9 @@ class AddTransactionActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Uloží transakci do databáze – novou nebo upravenou.
+     */
     private fun saveTransaction() {
         val amountText = binding.etTransactionAmount.text.toString()
         if (amountText.isEmpty()) return
@@ -139,20 +150,9 @@ class AddTransactionActivity : AppCompatActivity() {
             }
 
             withContext(Dispatchers.Main) {
-                setResult(RESULT_OK) // Nastavíme výsledek aktivity
-                finish() // Ukončíme aktivitu
+                setResult(RESULT_OK)
+                finish()
             }
         }
     }
-
-
-
-
-
-
-
-
-
-
-
 }
