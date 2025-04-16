@@ -140,10 +140,11 @@ class AddTransactionActivity : AppCompatActivity() {
         val selectedType = binding.spinnerType.selectedItem.toString()
         val type = if (selectedType == "Příjem") "income" else "expense"
 
-        val transaction = Transaction(transactionId, amount, type, selectedDate, category)
-
+        //val transaction = Transaction(transactionId, amount, type, selectedDate, category)
+        val transaction =  Transaction(amount = amount, type = type, date = selectedDate, category = category)
         CoroutineScope(Dispatchers.IO).launch {
             if (transactionId == -1) {
+
                 repository.insertTransaction(transaction)
             } else {
                 repository.updateTransaction(transaction)
